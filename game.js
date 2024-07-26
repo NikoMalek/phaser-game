@@ -2,6 +2,13 @@ const config = {
   type: Phaser.AUTO,
   width: 480,
   height: 800,
+  scale: {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    parent: 'game-container',
+    // width: '100%',
+    height: '100%'
+  },
   physics: {
     default: "arcade",
     arcade: {
@@ -22,6 +29,10 @@ const game = new Phaser.Game(config);
 
 
 let player;
+let movingRight = true; // Variable para controlar la dirección del movimiento
+let touchCount = 0; // Contador de toques
+let lastTouchTime = 0; // Tiempo del último toque
+
 let bomb;
 let gameOver = false;
 
@@ -271,46 +282,102 @@ if (personajeSelect == 2) {
   });
 }
 
-  // Controles del jugador
-  this.input.keyboard.on("keydown-LEFT", () => {
-    player.setAccelerationX(-aceleracion);
-    player.anims.play("left", true);
-    player.flipX = true;
-  });
+  // // Controles del jugador con teclado
+  // this.input.keyboard.on("keydown-LEFT", () => {
+  //   player.setAccelerationX(-aceleracion);
+  //   player.anims.play("left", true);
+  //   player.flipX = true;
+  // });
   
-  this.input.keyboard.on("keydown-RIGHT", () => {
-    player.setAccelerationX(aceleracion);
-    player.anims.play("right", true);
-    player.flipX = false;
-  });
+  // this.input.keyboard.on("keydown-RIGHT", () => {
+  //   player.setAccelerationX(aceleracion);
+  //   player.anims.play("right", true);
+  //   player.flipX = false;
+  // });
   
-  this.input.keyboard.on("keyup-LEFT", () => {
-    if (player.body.velocity.x < 0) {
-      player.setAccelerationX(0);
-      player.setVelocityX(0);
-      player.anims.play("turn");
-    }
-  });
+  // this.input.keyboard.on("keyup-LEFT", () => {
+  //   if (player.body.velocity.x < 0) {
+  //     player.setAccelerationX(0);
+  //     player.setVelocityX(0);
+  //     player.anims.play("turn");
+  //   }
+  // });
   
-  this.input.keyboard.on("keyup-RIGHT", () => {
-    if (player.body.velocity.x > 0) {
-      player.setAccelerationX(0);
-      player.setVelocityX(0);
-      player.anims.play("turn");
-    }
+  // this.input.keyboard.on("keyup-RIGHT", () => {
+  //   if (player.body.velocity.x > 0) {
+  //     player.setAccelerationX(0);
+  //     player.setVelocityX(0);
+  //     player.anims.play("turn");
+  //   }
+  // });
+
+  // this.input.keyboard.on("keydown-UP", () => {
+  //   if (player.body.touching.down) {
+  //     player.setVelocityY(-450);
+  //   }
+  // });
+
+  // Controles del jugador con pantalla táctil
+
+
+  this.time.addEvent({
+    delay: 100, // Ejecutar cada 100ms
+    callback: movePlayer,
+    callbackScope: this,
+    loop: true
   });
 
-  this.input.keyboard.on("keydown-UP", () => {
-    if (player.body.touching.down) {
-      player.setVelocityY(-450);
+  // Detectar toques/clics en la pantalla
+  this.input.on('pointerdown', function (pointer) {
+    let currentTime = new Date().getTime();
+    touchCount++;
+    
+    if (touchCount === 1) {
+        // Primer toque: saltar
+        if (player.body.touching.down) {
+            player.setVelocityY(-450);
+        }
     }
-  });
+    
+    if (touchCount === 2 && (currentTime - lastTouchTime) < 300) {
+        // Doble toque: cambiar dirección
+        movingRight = !movingRight;
+        touchCount = 0;
+    }
+    
+    // Reiniciar el contador después de un tiempo
+    this.time.delayedCall(300, function() {
+        touchCount = 0;
+    }, [], this);
+    
+    lastTouchTime = currentTime;
+  }, this);
+
+
+
+
 
 
 
 
 
 }
+
+
+// Función para mover al jugador
+function movePlayer() {
+  if (movingRight) {
+      player.setVelocityX(200); // Ajusta la velocidad según necesites
+      player.anims.play("right", true);
+      player.flipX = false;
+  } else {
+      player.setVelocityX(-200);
+      player.anims.play("left", true);
+      player.flipX = true;
+  }
+}
+
+
 
 
 // funcion para colicion de plataforma 
