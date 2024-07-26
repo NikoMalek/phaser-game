@@ -46,6 +46,7 @@ function preload() {
 
   this.load.image("sky", "assets/sky.jpg");
   this.load.image("ground", "assets/ground.png");
+  this.load.image("reiniciar", "assets/reiniciar.png");
   // this.load.image("star", "assets/star.png");
   this.load.spritesheet("bomb", "assets/bomb.png", {
     frameWidth: 32,
@@ -523,6 +524,21 @@ function update() {
     this.input.keyboard.enabled = false; // Disable keyboard input
     //moostrar record
     scoreText.setText('Tiempo: ' + Math.floor(elapsedTime));
+
+    // boton reinciar
+    const button = this.add.image(anchoJuego / 2, 510, 'reiniciar',{
+      backgroundColor: 'rgba(0, 0, 51, 0.8)',
+      padding: {
+        x: 10,
+        y: 5
+      },
+      fixedWidth: anchoJuego,
+      fixedHeight: 50
+
+    }).setScale(0.1).setInteractive();
+    button.on('pointerdown', () => {
+      this.scene.restart();
+    });
   });
 
 }
