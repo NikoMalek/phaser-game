@@ -537,6 +537,7 @@ function update() {
 
     }).setScale(0.1).setInteractive();
     button.on('pointerdown', () => {
+      gameOver = false
       this.scene.restart();
     });
   });
