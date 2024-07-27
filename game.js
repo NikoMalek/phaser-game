@@ -66,8 +66,12 @@ function preload() {
   }
   this.load.image("dead", "assets/dead.png");
   this.load.image("piso", "assets/plataform.png");
+  // Sonido de fondo
+  this.load.audio('fondomusic', 'assets/fondomusic.mp3');
   //Importar sonido salto
   this.load.audio('salto', 'assets/salto.mp3');
+  //Sonido de game over
+  this.load.audio('gameovermeow', 'assets/gameovermeow.mp3');
 }
 
 let platforms;
@@ -76,8 +80,10 @@ const maxVelocidad = 1000;
 
 function create() {
 
-
-
+  // Reproducir música de fondo
+  fondoMusic = this.sound.add('fondomusic', { loop: true });
+  fondoMusic.play();
+  gameOverMeow = this.sound.add('gameovermeow');
   
 
   // Posiciona la imagen de fondo para que ocupe toda la pantalla
@@ -442,7 +448,7 @@ function update() {
   //     }
   //   });
   // }
-
+  
   const velocidadFondo = 1;
   const anchoJuego = this.sys.game.config.width;
 
@@ -476,6 +482,7 @@ function update() {
   );
 
   if (!gameOver) {
+
     // Aumentar la velocidad de la bomba con el tiempo
     elapsedTime = (this.time.now - startTime) / 1000; // Tiempo en segundos
     bombSpeed = 60 + Math.floor(elapsedTime / 10) * 10; // Aumenta en 10 cada 10 segundos
@@ -527,7 +534,10 @@ function update() {
     gameOver = true;
     this.input.keyboard.enabled = false; // Disable keyboard input
     //moostrar record
-    scoreText.setText('Tiempo: ' + Math.floor(elapsedTime));
+    // scoreText.setText(anchoJuego / 2, 450, 'Tiempo: ' + Math.floor(elapsedTime));
+    fondoMusic.stop();
+    gameOverMeow.play();
+
 
     // boton reinciar
     const button = this.add.image(anchoJuego / 2, 510, 'reiniciar',{
@@ -542,6 +552,9 @@ function update() {
     }).setScale(0.1).setInteractive();
     button.on('pointerdown', () => {
       gameOver = false
+      //Quitar musica game over
+      gameOverMeow.stop();
+      // fondoMusic.play();
       this.scene.restart();
     });
   });
