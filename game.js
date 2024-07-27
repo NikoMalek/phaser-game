@@ -7,7 +7,7 @@ const config = {
     autoCenter: Phaser.Scale.CENTER_BOTH,
     parent: 'game-container',
     // width: '100%',
-    height: '100%'
+    // height: '100%'
   },
   physics: {
     default: "arcade",
@@ -66,6 +66,8 @@ function preload() {
   }
   this.load.image("dead", "assets/dead.png");
   this.load.image("piso", "assets/plataform.png");
+  //Importar sonido salto
+  this.load.audio('salto', 'assets/salto.mp3');
 }
 
 let platforms;
@@ -106,7 +108,7 @@ function create() {
   let platform4 = platforms.create(100, 150, "piso").setScale(0.6).refreshBody() // Plataforma 1
 
   setupOneWayPlatform(this, platform4);
-
+  
 
   // this.add.image(240, 800, "ground")
   // let groundBody = this.add.rectangle(183, 835);
@@ -337,6 +339,8 @@ if (personajeSelect == 2) {
         // Primer toque: saltar
         if (player.body.touching.down) {
             player.setVelocityY(-450);
+            // Reproducir sonido de salto
+            this.sound.play('salto');
         }
     }
     
